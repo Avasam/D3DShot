@@ -51,11 +51,18 @@ dependencies = [
 # 10.3.0 is the first py.typed, but we can do with simple type inference
 PIL = ["pillow >= 9.1.0"]
 numpy = [
-  "numpy >= 1.21.0", # First py.typed version w/ numpy.typing.NDArray
-  "numpy >= 1.25.0 ; python_version >= '3.9'",
+  "numpy >= 1.21.0 ; python_version >= '3.8'", # First py.typed version w/ numpy.typing.NDArray
+  "numpy >= 1.25.0 ; python_version >= '3.9'", # Disambiguate for uv by adding a Python 3.9 resolution
+  "numpy >= 1.26.0 ; python_version >= '3.12'", # Fixes distutils removal issue with setuptools
 ]
 # First py.typed version
-torch = ["torch >= 2.0.0", "typed-D3DShot[numpy]"]
+torch = [
+  "typed-D3DShot[numpy]",
+  "torch >= 2.0.0",
+  # UV's resolver doesn't account for lack of sdist or wheel https://github.com/astral-sh/uv/issues/9647
+  # PyTorch 2.5.0 doesn't have Python 3.8 wheels
+  "torch < 2.5.0 ; python_version < '3.9'",
+]
 
 [dependency-groups]
 dev = ["mypy ~= 1.12.1", "pyright == 1.1.385", "ruff ~= 0.7.0"]
